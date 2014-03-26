@@ -1,0 +1,9 @@
+{
+  "name": "meteor-solidifier",
+  "description": "Tools for making Meteor apps SOLID",
+  "homepage": "www.solidmeteor.com",
+  "author": "eluck",
+  "version": "0.0.1",
+  "git": "",
+  "packages": {}
+}
