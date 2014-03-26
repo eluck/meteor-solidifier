@@ -31,14 +31,14 @@ Synapse =
     #options =
     #  target
     #  synapseName
-    #  trackedMethodsNames
+    #  trackedMethods
     throw 'Error - Synapse:wrapMethods - options should be defined' unless options
     throw 'Error - Synapse:wrapMethods - options.target should be defined' unless options.target
     throw 'Error - Synapse:wrapMethods - options.synapseName should be defined' unless options.synapseName
     target = options.target
     target[options.synapseName] = new BackboneEvent()
     if options.trackedMethods
-      options.trackedMethodsNames.forEach (methodName)->
+      options.trackedMethods.forEach (methodName)->
         @_wrapMethod(target, methodName, target[options.synapseName])
       , @
 
