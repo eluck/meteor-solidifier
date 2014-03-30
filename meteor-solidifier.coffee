@@ -51,3 +51,10 @@ SolidSynapse =
       result = methodToCall.apply(target, arguments)
       synapse.trigger('after:' + methodName, result)
       return result
+
+
+
+GlobalDependenciesProxy =
+  SolidDeps: SolidDeps
+  SolidSynapse: SolidSynapse
+  BackboneEvent: BackboneEvent
