@@ -16,6 +16,7 @@ Package.on_use(function (api) {
     api.export([
         'BackboneEvent',
         'SolidDeps',
-        'SolidSynapse'
+        'SolidSynapse',
+        'SolidDepsProxy'
     ], ['client', 'server']);
 });

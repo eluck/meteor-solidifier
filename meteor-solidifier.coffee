@@ -54,7 +54,7 @@ SolidSynapse =
 
 
 
-GlobalDependenciesProxy =
+SolidDepsProxy =
   SolidDeps: SolidDeps
   SolidSynapse: SolidSynapse
   BackboneEvent: BackboneEvent
