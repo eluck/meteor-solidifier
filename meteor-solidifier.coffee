@@ -10,13 +10,11 @@ Solidifier =
       throw 'Error - Solidifier:Synapse:wrapMethods - expected parameter options.synapseName' unless options.synapseName
       { target, synapseName, trackedMethods } = options
       target[synapseName] = new BackboneEvent()
-      trackedMethods?.forEach (methodName) ->
-        @_wrapMethod(target, methodName, target[synapseName])
-      , @
+      trackedMethods?.forEach(@_wrapMethod.bind(@, target, target[synapseName]), @)
 
 
 
-    _wrapMethod: (target, methodName, synapse) ->
+    _wrapMethod: (target, synapse, methodName) ->
       throw 'Error - SolidSynapse:wrapMethod - methodName should be defined' unless methodName
       methodToCall = target[methodName]
       throw "Error - SolidSynapse:wrapMethod - target does not contain a method named #{methodName}" unless methodToCall
