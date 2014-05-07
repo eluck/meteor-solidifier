@@ -73,7 +73,10 @@ Solidifier =
 
     _setCallbackArgument: (callArgs, callback) ->
       [..., originalCallback] = callArgs
-      return undefined unless originalCallback and typeof(originalCallback) == 'function' or Meteor.isClient #client-side code always works as if there was a callback
+      if Meteor.isClient  #client-side code always works as if there was a callback
+        originalCallback = null unless typeof(originalCallback) == 'function'
+      else
+        return undefined unless originalCallback and typeof(originalCallback) == 'function'
       callbackIndex = callArgs.length
       callbackIndex-- if originalCallback #rewrite original callback if presents
       args = callArgs[..]
