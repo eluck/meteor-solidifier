@@ -3,7 +3,7 @@
   "description": "Tools for making Meteor apps SOLID",
   "homepage": "solidmeteor.com",
   "author": "eluck",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "git": "https://github.com/eluck/meteor-solidifier.git",
   "packages": {}
 }
