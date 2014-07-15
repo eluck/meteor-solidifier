@@ -39,16 +39,23 @@ Solidifier =
 
       collection[synapseName] = new BackboneEvent()
 
-      beforeInsert = (originalArgs) -> collection[synapseName].trigger('before:insert', originalArgs)
-      beforeUpdate = (originalArgs) -> collection[synapseName].trigger('before:update', originalArgs)
-      beforeUpsert = (originalArgs) -> collection[synapseName].trigger('before:upsert', originalArgs)
-      beforeRemove = (originalArgs) -> collection[synapseName].trigger('before:remove', originalArgs)
+      #instead of docs :)
+      beforeFind    = (originalArgs) -> collection[synapseName].trigger('before:find',    originalArgs)
+      beforeFindOne = (originalArgs) -> collection[synapseName].trigger('before:findOne', originalArgs)
+      beforeInsert  = (originalArgs) -> collection[synapseName].trigger('before:insert',  originalArgs)
+      beforeUpdate  = (originalArgs) -> collection[synapseName].trigger('before:update',  originalArgs)
+      beforeUpsert  = (originalArgs) -> collection[synapseName].trigger('before:upsert',  originalArgs)
+      beforeRemove  = (originalArgs) -> collection[synapseName].trigger('before:remove',  originalArgs)
 
-      afterInsert = (originalArgs, error, result) -> collection[synapseName].trigger('after:insert', error, result, originalArgs)
-      afterUpdate = (originalArgs, error, result) -> collection[synapseName].trigger('after:update', error, result, originalArgs)
-      afterUpsert = (originalArgs, error, result) -> collection[synapseName].trigger('after:upsert', error, result, originalArgs)
-      afterRemove = (originalArgs, error) ->         collection[synapseName].trigger('after:remove', error, originalArgs)
+      afterFind    = (originalArgs, result)        -> collection[synapseName].trigger('after:find',    result, originalArgs)
+      afterFindOne = (originalArgs, result)        -> collection[synapseName].trigger('after:findOne', result, originalArgs)
+      afterInsert  = (originalArgs, error, result) -> collection[synapseName].trigger('after:insert',  error,  result,       originalArgs)
+      afterUpdate  = (originalArgs, error, result) -> collection[synapseName].trigger('after:update',  error,  result,       originalArgs)
+      afterUpsert  = (originalArgs, error, result) -> collection[synapseName].trigger('after:upsert',  error,  result,       originalArgs)
+      afterRemove  = (originalArgs, error)         -> collection[synapseName].trigger('after:remove',  error,  originalArgs)
 
+      @_wrapCollectionFindMethod(collection, 'find', beforeFind, afterFind)
+      @_wrapCollectionFindMethod(collection, 'findOne', beforeFindOne, afterFindOne)
       @_wrapCollectionMethod(collection, 'insert', beforeInsert, afterInsert)
       @_wrapCollectionMethod(collection, 'update', beforeUpdate, afterUpdate)
       @_wrapCollectionMethod(collection, 'upsert', beforeUpsert, afterUpsert)
@@ -56,12 +63,26 @@ Solidifier =
 
 
 
+    _wrapCollectionFindMethod: (collection, wrappingMethod, beforeCallback, afterCallback) ->
+      originalMethod = 'original' + @_uppercaseFirstLetter(wrappingMethod)
+      collection[originalMethod] = collection[wrappingMethod]
+      collection[wrappingMethod] = ->
+        originalArgs = Array.prototype.slice.call(arguments, 0)
+        originalArgs.caller = arguments.callee.caller
+        beforeCallback(originalArgs)
+        result = collection[originalMethod].apply(@, arguments)
+        afterCallback.call(null, originalArgs, result)
+        return result
+
+
+
     _wrapCollectionMethod: (collection, wrappingMethod, beforeCallback, afterCallback) ->
-      originalMethod = 'original' + wrappingMethod.charAt(0).toUpperCase() + wrappingMethod.slice(1)
+      originalMethod = 'original' + @_uppercaseFirstLetter(wrappingMethod)
       collection[originalMethod] = collection[wrappingMethod]
       self = @
       collection[wrappingMethod] = ->
         originalArgs = Array.prototype.slice.call(arguments, 0)
+        originalArgs.caller = arguments.callee.caller
         beforeCallback(originalArgs)
         after = afterCallback.bind(null, originalArgs)
         args = self._setCallbackArgument originalArgs, after
@@ -84,3 +105,8 @@ Solidifier =
         callback.apply(null, arguments)
         originalCallback.apply(null, arguments) if originalCallback and typeof(originalCallback) == 'function'
       return args
+
+
+
+    _uppercaseFirstLetter: (string) ->
+      string.charAt(0).toUpperCase() + string.slice(1)
